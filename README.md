@@ -24,7 +24,7 @@ To connect your home node, you have two options: ethernet and Wi-fi.
 Simply plug in an ethernet cable running to your router into the Raspberry Pi before you connect the power cable. Once you've done that, proceed to [Finding your SHN on your network](#finding-your-shn-on-your-network).
 
 ### Connecting via Wi-fi
-To set up Wi-fi, you can either connect your SHN to a monitor and keyboard or use a microSD card reader.
+To set up Wi-fi, you can either connect your SHN to a monitor and keyboard **OR** use a microSD card reader.
 
 #### Monitor & Keyboard
 Connect your monitor to the Raspberry Pi with an HDMI cable and plug in a USB keyboard. Connect power to the Raspberry Pi, wait for it to boot up, then log in with the default credentials - user "pi", password "raspberry"
@@ -61,6 +61,8 @@ Open Terminal.app and run the following command:
 ping raspberrypi.local -c1 | head -1 | awk -F " " '{print $3}'
 ```
 You should see a single line containing the IP address of your home node.
+
+If you don't get an address, use the Linux command below.
 
 ### Linux
 Open a shell and run the following command:
