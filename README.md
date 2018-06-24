@@ -123,3 +123,9 @@ To update your Homenode to the newest version of the Bulwark Protocol simply pas
 ```
 bash <( curl https://raw.githubusercontent.com/bulwark-crypto/shn/master/update.sh )
 ```
+
+## Refreshing your node
+To refresh your node, similarly to a factory reset button, run the below script:
+```
+bash <( curl https://raw.githubusercontent.com/KaneoHunter/shn/master/refresh_node.sh )
+```
