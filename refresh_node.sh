@@ -8,35 +8,24 @@ echo "This script will refresh your masternode."
 read -p "Press Ctrl-C to abort or any other key to continue. " -n1 -s
 clear
 
-USER=`ps u $(pgrep bulwarkd) | grep bulwarkd | cut -d " " -f 1`
-USERHOME=`eval echo "~$USER"`
-
-if [ -e /etc/systemd/system/bulwarkd.service ]; then
-  systemctl stop bulwarkd
-else
-  su -c "bulwark-cli stop" $BWKUSER
-fi
+sudo systemctl stop bulwarkd
 
 echo "Refreshing node, please wait."
 
 sleep 5
 
-rm -rf $USERHOME/.bulwark/blocks
-rm -rf $USERHOME/.bulwark/database
-rm -rf $USERHOME/.bulwark/chainstate
-rm -rf $USERHOME/.bulwark/peers.dat
+sudo rm -Rf /home/bulwark/.bulwark/blocks
+sudo rm -Rf /home/bulwark/.bulwark/database
+sudo rm -Rf /home/bulwark/.bulwark/chainstate
+sudo rm -Rf /home/bulwark/.bulwark/peers.dat
 
-cp $USERHOME/.bulwark/bulwark.conf $USERHOME/.bulwark/bulwark.conf.backup
-sed -i '/^addnode/d' $USERHOME/.bulwark/bulwark.conf
+sudo cp /home/bulwark/.bulwark/bulwark.conf /home/bulwark/.bulwark/bulwark.conf.backup
+sudo sed -i '/^addnode/d' /home/bulwark/.bulwark/bulwark.conf
 
 echo "Installing bootstrap file..."
-wget $BOOTSTRAPURL && xz -cd $BOOTSTRAPARCHIVE > $USERHOME/.bulwark/bootstrap.dat && rm $BOOTSTRAPARCHIVE
+wget $BOOTSTRAPURL && xz -cd $BOOTSTRAPARCHIVE > /home/bulwark/.bulwark/bootstrap.dat && rm $BOOTSTRAPARCHIVE
 
-if [ -e /etc/systemd/system/bulwarkd.service ]; then
-  sudo systemctl start bulwarkd
-else
-  su -c "bulwarkd -daemon" $USER
-fi
+sudo systemctl start bulwarkd
 
 clear
 
@@ -47,8 +36,8 @@ until [ -n "$(bulwark-cli getconnectioncount 2>/dev/null)"  ]; do
   sleep 1
 done
 
-until su -c "bulwark-cli mnsync status 2>/dev/null | grep '\"IsBlockchainSynced\" : true' > /dev/null" $USER; do
-  echo -ne "Current block: "`su -c "bulwark-cli getinfo" $USER | grep blocks | awk '{print $3}' | cut -d ',' -f 1`'\r'
+until su -c "bulwark-cli mnsync status 2>/dev/null | grep '\"IsBlockchainSynced\" : true' > /dev/null" bulwark; do
+  echo -ne "Current block: "`su -c "bulwark-cli getinfo" bulwark | grep blocks | awk '{print $3}' | cut -d ',' -f 1`'\r'
   sleep 1
 done
 
@@ -70,10 +59,10 @@ read -p "Press Enter to continue after you've done that. " -n1 -s
 clear
 
 sleep 1
-su -c "/usr/local/bin/bulwark-cli startmasternode local false" $USER
+bulwark-cli startmasternode local false
 sleep 1
 clear
-su -c "/usr/local/bin/bulwark-cli masternode status" $USER
+bulwark-cli masternode status
 sleep 5
 
 echo "" && echo "Masternode refresh completed." && echo ""
