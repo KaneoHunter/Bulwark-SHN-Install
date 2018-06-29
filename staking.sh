@@ -2,7 +2,7 @@
 
 #Ensure bulwarkd is active
   if systemctl is-active --quiet bulwarkd; then
-  	systemctl start bulwarkd
+  	sudo systemctl start bulwarkd
 fi
 echo "Setting Up Staking Address.."
 
@@ -14,16 +14,16 @@ until su -c "bulwark-cli mnsync status 2>/dev/null | grep '\"IsBlockchainSynced\
 done
 
 #Ensure the .conf exists
-touch ~/.bulwark/bulwark.conf
+touch $HOME/.bulwark/bulwark.conf
 
 #If the line does not already exist, adds a line to bulwark.conf to instruct the wallet to stake
 
-sed 's/staking=0/staking=1/' <~/.bulwark/bulwark.conf
+sed 's/staking=0/staking=1/' <$HOME/.bulwark/bulwark.conf
 
-if grep -Fxq "staking=1" ~/.bulwark/bulwark.conf; then
+if grep -Fxq "staking=1" $HOME/.bulwark/bulwark.conf; then
   	echo "Staking Already Active"
   else
-  	echo "staking=1" >> ~/.bulwark/bulwark.conf
+  	echo "staking=1" >> $HOME/.bulwark/bulwark.conf
 fi
 
 #Generates new address and assigns it a variable
@@ -57,18 +57,15 @@ until  ! systemctl is-active --quiet bulwarkd; do
 done
 
 #Open up bulwarkd again
-systemctl start bulwarkd
+sudo systemctl start bulwarkd
 
 #Unlocks the wallet for a long time period
 bulwark-cli walletpassphrase $ENCRYPTIONKEY 9999999999 true
 
 #Make decrypt script
-cd ~/.bulwark
-sudo wget https://raw.githubusercontent.com/KaneoHunter/shn/master/decrypt.sh
-cp ~/.bulwark/decrypt.sh /usr/bin/local/bin/decrypt.sh
-chown $USER:$USER /usr/local/bin/decrypt.sh
-chmod 700 /usr/local/bin/decrypt.sh
-rm -Rf ~/.bulwark/decrypt.sh
+sudo curl https://raw.githubusercontent.com/KaneoHunter/shn/master/decrypt.sh > /usr/local/bin/decrypt.sh
+sudo chown $USER:$USER /usr/local/bin/decrypt.sh
+sudo chmod 700 /usr/local/bin/decrypt.sh
 
 
 #Output more
@@ -114,7 +111,7 @@ echo "Thank you for setting up staking, now finishing setup.."
 
 unset CONFIRMATION ENCRYPTIONKEYCONF ENCRYPTIONKEY BIP38 STAKINGADDRESS
 
-cat /dev/null > ~/.bash_history && history -c
+cat /dev/null > $HOME/.bash_history && history -c
 
 clear
 
