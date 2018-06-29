@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Make sure curl is installed
+apt -qqy install curl
+clear
+
 #Ensure bulwarkd is active
   if systemctl is-active --quiet bulwarkd; then
   	sudo systemctl start bulwarkd
